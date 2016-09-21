@@ -1,0 +1,27 @@
+{
+  "name": "limit-order-book",
+  "author": "rhodey orbits",
+  "description": "A limit order book implementation supporting limit and market orders.",
+  "license": "GPL-3.0",
+  "version": "0.3.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rhodey/limit-order-book"
+  },
+  "keywords": [
+    "limit",
+    "market",
+    "trading",
+    "hft"
+  ],
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "dependencies": {
+    "js-priority-queue": "0.1.5"
+  },
+  "devDependencies": {
+    "tape": "4.6.0"
+  }
+}
