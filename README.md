@@ -1,49 +1,137 @@
 # limit-order-book
-A JavaScript limit order book implementation supporting limit and market orders.
+At time of publish in 2016 this was the only OSS limit order book on github
+
+The order book has always been passing tests but with v1.0.0 the api has significantly improved
+
++ **npm install limit-order-book**
++ Suitable for matching engine
++ Supports limit and market orders
++ Floats as strings internally = always correct math
 
 ## Usage
 ```javascript
-var LimitOrder = require('limit-order-book').LimitOrder
-var LimitOrderBook = require('limit-order-book').LimitOrderBook
+const { LimitOrderBook } = require('limit-order-book')
+const { LimitOrder, MarketOrder } = require('limit-order-book')
 
-let order1 = new LimitOrder("order01", "bid", 13.37, 10)
-let order2 = new LimitOrder("order02", "ask", 13.38, 10)
-let order3 = new LimitOrder("order03", "bid", 13.38, 5)
+const symbol = 'BTCUSDT'
+const priceStep = '0.01'
+const sizeStep = '0.001'
+const book = new LimitOrderBook({ symbol, priceStep, sizeStep })
 
-let book = new LimitOrderBook()
+const order1 = new LimitOrder('order1', 'bid', '13.37', '10')
+const order2 = new LimitOrder('order2', 'ask', '13.38', '10')
+const order3 = new LimitOrder('order3', 'bid', '13.38', '5')
 
 let result = book.add(order1)
 result = book.add(order2)
 result = book.add(order3)
 
+const order4 = new MarketOrder('order4', 'bid', '2.5')
+result = book.add(order4)
+
 console.log(result)
+
+const bestAskLevel = book.askLevels.queue[0]
+const bestBidLevel = book.bidLevels.queue[0]
+
+const bestAsk = bestAskLevel.queue[0].copy()
+const bestBid = bestBidLevel.queue[0].copy()
+
+console.log(`\nbest ask =`, bestAsk)
+console.log(`\nbest bid =`, bestBid)
+
+const Decimal = require('decimal.js')
+
+const spread = new Decimal(bestAsk.price)
+  .sub(bestBid.price)
+  .toFixed()
+
+console.log(`\nspread =`, spread)
 ```
 ```
-TakeResult {
-  taker:
-   LimitOrder {
-     orderId: 'order03',
-     side: 'bid',
-     price: 13.38,
-     size: 5,
-     sizeRemaining: 0,
-     valueRemoved: 0 },
-  makers:
-   [ LimitOrder {
-       orderId: 'order02',
-       side: 'ask',
-       price: 13.38,
-       size: 10,
-       sizeRemaining: 5,
-       valueRemoved: 66.9 } ],
-  takeSize: 5,
-  takeValue: 66.9 }
+Result {
+  symbol: 'BTCUSDT',
+  taker: {
+    type: 'market',
+    orderId: 'order4',
+    side: 'bid',
+    price: '0',
+    size: '2.5',
+    sizeRemaining: '0',
+    filled: '2.5',
+    filledValue: '33.45',
+    funds: '0',
+    fundsRemaining: '0'
+  },
+  makers: [
+    {
+      type: 'limit',
+      orderId: 'order2',
+      side: 'ask',
+      price: '13.38',
+      size: '10',
+      sizeRemaining: '2.5',
+      filled: '2.5',
+      filledValue: '33.45'
+    }
+  ],
+  filled: '2.5',
+  filledValue: '33.45'
+}
+
+best ask = {
+  type: 'limit',
+  orderId: 'order2',
+  side: 'ask',
+  price: '13.38',
+  size: '10',
+  sizeRemaining: '2.5'
+}
+
+best bid = {
+  type: 'limit',
+  orderId: 'order1',
+  side: 'bid',
+  price: '13.37',
+  size: '10',
+  sizeRemaining: '10'
+}
+
+spread = 0.01
 ```
 
-## Testing
+## Api
 ```
-$ npm run test
+book({ symbol, priceStep, sizeStep })
+Constructor wants symbol, priceStep, sizeStep
+
+book.config(opts)
+Same as constructor
+
+book.add(order)
+Add a limit or market order to the book and get back result
+
+book.reduce(orderId, size)
+Reduce the size of an order to = size
+Returns null or the updated order
+
+book.remove(orderId)
+Remove the order from the book
+Returns null or the order
+
+book.clear()
+Remove all orders
+```
+
+## Test
+[480 test assertions passing](https://github.com/rhodey/limit-order-book/tree/master/test)
+```
+npm run test
 ```
 
 ## License
-Copyright 2016 An Honest Effort LLC, licensed under GPLv3: http://www.gnu.org/licenses/gpl-3.0.html
+```
+Copyright 2025 - mike@rhodey.org
+
+MIT
+```
