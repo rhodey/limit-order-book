@@ -2,7 +2,7 @@
   "name": "limit-order-book",
   "author": "Rhodey Orbits",
   "description": "Order book supporting limit and market orders",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "main": "index.js",
   "repository": {

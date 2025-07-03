@@ -124,7 +124,7 @@ Remove all orders
 ```
 
 ## Test
-[480 test assertions passing](https://github.com/rhodey/limit-order-book/tree/master/test)
+[480 assertions passing](https://github.com/rhodey/limit-order-book/tree/master/test)
 ```
 npm run test
 ```
